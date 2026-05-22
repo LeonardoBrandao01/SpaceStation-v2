@@ -1,0 +1,161 @@
+=================================================================
+  SPACE STATION FRONTEND - GITHUB DEPLOYMENT INSTRUCTIONS
+=================================================================
+
+This repository is now initialized with Git and ready to be pushed 
+to GitHub. Follow the steps below to complete the setup.
+
+PROJECT: Space Station Frontend
+THEME: Dark Minimalist (White + Gray Palette)
+STATUS: Ready for deployment
+
+=================================================================
+  STEP-BY-STEP INSTRUCTIONS
+=================================================================
+
+1. CREATE A NEW REPOSITORY ON GITHUB
+   ─────────────────────────────────
+   
+   • Go to https://github.com/new
+   • Enter repository name: space-station-frontend
+   • Choose: Public or Private (your choice)
+   • DO NOT initialize with README, .gitignore, or license
+   • Click "Create repository"
+
+2. COPY YOUR REPOSITORY URL
+   ────────────────────────
+   
+   After creating the repository, you'll see a quick setup page.
+   Copy the HTTPS URL that looks like:
+   
+   https://github.com/YOUR-USERNAME/space-station-frontend.git
+   
+   (Or SSH if you prefer: git@github.com:YOUR-USERNAME/space-station-frontend.git)
+
+3. ADD REMOTE AND PUSH TO GITHUB
+   ─────────────────────────────
+   
+   Run these commands in your terminal (in this directory):
+   
+   git remote add origin https://github.com/YOUR-USERNAME/space-station-frontend.git
+   git branch -M main
+   git push -u origin main
+
+4. VERIFY ON GITHUB
+   ────────────────
+   
+   • Go to https://github.com/YOUR-USERNAME/space-station-frontend
+   • Verify all files are uploaded
+   • Check the commit history
+
+=================================================================
+  QUICK REFERENCE - ALL COMMANDS AT ONCE
+=================================================================
+
+If you want to run everything together, use this:
+
+git remote add origin https://github.com/YOUR-USERNAME/space-station-frontend.git && \
+git branch -M main && \
+git push -u origin main
+
+Replace YOUR-USERNAME with your actual GitHub username.
+
+=================================================================
+  PROJECT INFORMATION
+=================================================================
+
+Technology Stack:
+  • React 19.2.6
+  • TypeScript 6.0.2
+  • Vite 8.0.12
+  • React Router 7.15.1
+  • Lucide React Icons
+
+Build & Development Commands:
+  npm install          # Install dependencies
+  npm run dev          # Start development server
+  npm run build        # Build for production
+  npm run preview      # Preview production build locally
+  npm run lint         # Run ESLint
+
+Project Structure:
+  src/
+    ├── components/    # Shared UI components (Header, Sidebar)
+    ├── pages/         # Page components (Dashboard, CRUD modules)
+    ├── context/       # React Context (AuthContext)
+    ├── services/      # Data services (mockDb)
+    ├── App.tsx        # Main app component
+    ├── index.css      # Global styles (NEW: minimalista theme)
+    └── main.tsx       # Entry point
+
+CRUD Modules:
+  • Especialidade (Skills)
+  • Combustível (Fuel)
+  • Relatório (Reports)
+  • Empresa Parceira (Partner Companies)
+  • Foguete (Rockets)
+  • Astronauta (Astronauts)
+  • Missão (Missions)
+  • Oxigênio (Oxygen)
+  • Estação (Stations)
+
+=================================================================
+  DESIGN CHANGES (v2.0)
+=================================================================
+
+✓ Migrated from neon sci-fi theme to minimalist dark elegance
+✓ Color palette: White + Gray + Dark backgrounds
+✓ Removed: Cyan, Green, Orange, Purple neon colors
+✓ Maintained: Glassmorphism blur effects
+✓ Optimized: Orbitron typography (reduced letter-spacing)
+✓ Added: Mobile responsiveness improvements
+✓ Enhanced: Accessibility (focus-visible states)
+✓ Improved: Loading animations with smooth transitions
+
+=================================================================
+  TROUBLESHOOTING
+=================================================================
+
+If you get an error about branch main not existing:
+  git branch -M main
+
+If you get authentication errors:
+  • Make sure you have Git credentials configured
+  • Or use SSH keys instead of HTTPS
+  • Check: https://docs.github.com/en/authentication
+
+If you need to change the remote URL later:
+  git remote set-url origin NEW_URL
+
+To check your current remote:
+  git remote -v
+
+=================================================================
+  SUPPORT & NOTES
+=================================================================
+
+• All files are staged and ready to push
+• Initial commit includes all 43 project files
+• No dependencies (node_modules) are included (.gitignore configured)
+• .gitignore configuration excludes: dist/, .vscode/, .DS_Store, *.log
+
+For more information:
+  GitHub Docs: https://docs.github.com/en/get-started/using-git
+  Git Documentation: https://git-scm.com/doc
+
+=================================================================
+  READY? LET'S GO! 🚀
+=================================================================
+
+Execute the commands from STEP 3 above and your project will be
+live on GitHub!
+
+Questions? Check the official Git and GitHub documentation.
+
+Happy coding!
+
+Leonardo Brandão
+Space Station Frontend Team
+Modified: May 22, 2026
+
+=================================================================
