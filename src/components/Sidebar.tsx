@@ -81,8 +81,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
 
       <div className="sidebar-footer">
         <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-          LATENCY: 14ms<br />
-          ORBIT: 418km (LEO)
+          LATENCY: 14ms
         </p>
       </div>
     </aside>

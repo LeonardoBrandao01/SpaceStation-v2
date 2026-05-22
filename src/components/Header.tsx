@@ -15,7 +15,7 @@ export const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) =
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      const utcString = now.toUTCString().replace('GMT', 'UTC');
+      const utcString = now.toUTCString().replace('GMT', 'UTC-3');
       setTimeStr(utcString);
     };
 
