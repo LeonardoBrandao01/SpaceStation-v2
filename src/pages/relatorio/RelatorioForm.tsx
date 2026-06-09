@@ -13,17 +13,26 @@ export const RelatorioForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isEdit) {
-      const item = mockDb.relatorios.getById(parseInt(id));
-      if (item) {
-        setDescricao(item.descricao);
-      } else {
-        setError("Relatório não encontrado no banco de dados.");
+    const loadFormData = async () => {
+      try {
+    
+        if (isEdit) {
+          const item = await mockDb.relatorios.getById(parseInt(id));
+          if (item) {
+            setDescricao(item.descricao);
+          } else {
+            setError("Relatório não encontrado no banco de dados.");
+          }
+        }
+      
+      } catch (err: any) {
+        setError(err.message || "Erro ao carregar dados.");
       }
-    }
+    };
+    loadFormData();
   }, [id, isEdit]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -35,9 +44,9 @@ export const RelatorioForm: React.FC = () => {
 
     try {
       if (isEdit) {
-        mockDb.relatorios.update(parseInt(id!), { descricao: trimmedDesc });
+        await mockDb.relatorios.update(parseInt(id!), { descricao: trimmedDesc });
       } else {
-        mockDb.relatorios.create({ descricao: trimmedDesc });
+        await mockDb.relatorios.create({ descricao: trimmedDesc });
       }
       navigate('/relatorio');
     } catch (err: any) {

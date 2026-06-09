@@ -14,18 +14,27 @@ export const CombustivelForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isEdit) {
-      const item = mockDb.combustiveis.getById(parseInt(id));
-      if (item) {
-        setTipo(item.tipo);
-        setMarca(item.marca);
-      } else {
-        setError("Combustível não localizado na base.");
+    const loadFormData = async () => {
+      try {
+    
+        if (isEdit) {
+          const item = await mockDb.combustiveis.getById(parseInt(id));
+          if (item) {
+            setTipo(item.tipo);
+            setMarca(item.marca);
+          } else {
+            setError("Combustível não localizado na base.");
+          }
+        }
+      
+      } catch (err: any) {
+        setError(err.message || "Erro ao carregar dados.");
       }
-    }
+    };
+    loadFormData();
   }, [id, isEdit]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -39,9 +48,9 @@ export const CombustivelForm: React.FC = () => {
 
     try {
       if (isEdit) {
-        mockDb.combustiveis.update(parseInt(id!), { tipo: trimmedTipo, marca: trimmedMarca });
+        await mockDb.combustiveis.update(parseInt(id!), { tipo: trimmedTipo, marca: trimmedMarca });
       } else {
-        mockDb.combustiveis.create({ tipo: trimmedTipo, marca: trimmedMarca });
+        await mockDb.combustiveis.create({ tipo: trimmedTipo, marca: trimmedMarca });
       }
       navigate('/combustivel');
     } catch (err: any) {

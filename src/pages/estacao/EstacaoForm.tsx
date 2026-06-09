@@ -24,26 +24,35 @@ export const EstacaoForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Load datasets
-    setMissoes(mockDb.missoes.getAll());
-    setOxigenios(mockDb.oxigenios.getAll());
-
-    if (isEdit) {
-      const item = mockDb.estacoes.getById(parseInt(id));
-      if (item) {
-        setNome(item.nome);
-        setQuantidadeModulos(item.quantidadeModulos);
-        setTemperatura(item.temperatura.toString());
-        setEstaAtiva(item.estaAtiva);
-        setMissaoId(item.missao_idMissao);
-        setOxigenioId(item.oxigenio_idOxigenio);
-      } else {
-        setError("Estação espacial não encontrada.");
+    const loadFormData = async () => {
+      try {
+    
+        // Load datasets
+        setMissoes(await mockDb.missoes.getAll());
+        setOxigenios(await mockDb.oxigenios.getAll());
+    
+        if (isEdit) {
+          const item = await mockDb.estacoes.getById(parseInt(id));
+          if (item) {
+            setNome(item.nome);
+            setQuantidadeModulos(item.quantidadeModulos);
+            setTemperatura(item.temperatura.toString());
+            setEstaAtiva(item.estaAtiva);
+            setMissaoId(item.missao_idMissao);
+            setOxigenioId(item.oxigenio_idOxigenio);
+          } else {
+            setError("Estação espacial não encontrada.");
+          }
+        }
+      
+      } catch (err: any) {
+        setError(err.message || "Erro ao carregar dados.");
       }
-    }
+    };
+    loadFormData();
   }, [id, isEdit]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -62,7 +71,7 @@ export const EstacaoForm: React.FC = () => {
     }
 
     // Retrieve selected mission details to fill foreign-key values
-    const selectedMission = mockDb.missoes.getById(missaoId);
+    const selectedMission = await mockDb.missoes.getById(missaoId);
     if (!selectedMission) {
       setError("A missão selecionada não foi encontrada na base.");
       return;
@@ -83,9 +92,9 @@ export const EstacaoForm: React.FC = () => {
       };
 
       if (isEdit) {
-        mockDb.estacoes.update(parseInt(id!), payload);
+        await mockDb.estacoes.update(parseInt(id!), payload);
       } else {
-        mockDb.estacoes.create(payload);
+        await mockDb.estacoes.create(payload);
       }
       navigate('/estacao');
     } catch (err: any) {

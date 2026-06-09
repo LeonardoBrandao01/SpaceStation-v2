@@ -17,23 +17,32 @@ export const FogueteForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Load fuels for selection
-    const fuels = mockDb.combustiveis.getAll();
-    setCombustiveis(fuels);
-
-    if (isEdit) {
-      const item = mockDb.foguetes.getById(parseInt(id));
-      if (item) {
-        setNome(item.nome);
-        setCombustivelId(item.combustivel_idCombustivel);
-        setLocalLancamento(item.localLancamento);
-      } else {
-        setError("Foguete não localizado no banco central.");
+    const loadFormData = async () => {
+      try {
+    
+        // Load fuels for selection
+        const fuels = await mockDb.combustiveis.getAll();
+        setCombustiveis(fuels);
+    
+        if (isEdit) {
+          const item = await mockDb.foguetes.getById(parseInt(id));
+          if (item) {
+            setNome(item.nome);
+            setCombustivelId(item.combustivel_idCombustivel);
+            setLocalLancamento(item.localLancamento);
+          } else {
+            setError("Foguete não localizado no banco central.");
+          }
+        }
+      
+      } catch (err: any) {
+        setError(err.message || "Erro ao carregar dados.");
       }
-    }
+    };
+    loadFormData();
   }, [id, isEdit]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -53,9 +62,9 @@ export const FogueteForm: React.FC = () => {
       };
 
       if (isEdit) {
-        mockDb.foguetes.update(parseInt(id!), payload);
+        await mockDb.foguetes.update(parseInt(id!), payload);
       } else {
-        mockDb.foguetes.create(payload);
+        await mockDb.foguetes.create(payload);
       }
       navigate('/foguete');
     } catch (err: any) {

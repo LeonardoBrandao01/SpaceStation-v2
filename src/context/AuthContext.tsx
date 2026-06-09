@@ -33,34 +33,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = async (username: string, password: string, requireAdmin: boolean) => {
-    // Mimic API delay
-    await new Promise(resolve => setTimeout(resolve, 800));
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        nome: username,
+        senha: password,
+      }),
+    });
 
-    const u = username.trim().toLowerCase();
-    const p = password;
-
-    if (u === 'admin' && p === 'admin123') {
-      const session: UserSession = {
-        name: 'Administrador da Estação',
-        username: 'admin',
-        role: 'admin'
-      };
-      localStorage.setItem('auth_user', JSON.stringify(session));
-      setUser(session);
-    } else if (u === 'usuario' && p === 'user123') {
-      if (requireAdmin) {
-        throw new Error('Acesso negado: Perfil de Administrador exigido.');
-      }
-      const session: UserSession = {
-        name: 'Operador de Voo',
-        username: 'usuario',
-        role: 'user'
-      };
-      localStorage.setItem('auth_user', JSON.stringify(session));
-      setUser(session);
-    } else {
-      throw new Error('Credenciais espaciais incorretas.');
+    if (!res.ok) {
+      const errData = await res.json().catch(() => null);
+      throw new Error(errData?.message || 'Credenciais espaciais incorretas.');
     }
+
+    const session = await res.json();
+
+    if (requireAdmin && session.role !== 'admin') {
+      throw new Error('Acesso negado: Perfil de Administrador exigido.');
+    }
+
+    localStorage.setItem('auth_user', JSON.stringify(session));
+    setUser(session);
   };
 
   const logout = () => {

@@ -15,17 +15,17 @@ export const EstacaoList: React.FC = () => {
     loadData();
   }, []);
 
-  const loadData = () => {
-    setItems(mockDb.estacoes.getAll());
+  const loadData = async () => {
+    setItems(await mockDb.estacoes.getAll());
 
-    const missions = mockDb.missoes.getAll();
+    const missions = await mockDb.missoes.getAll();
     const missMap: Record<number, string> = {};
     missions.forEach(m => {
       missMap[m.idMissao] = m.nomeMissao;
     });
     setMissionsMap(missMap);
 
-    const oxygens = mockDb.oxigenios.getAll();
+    const oxygens = await mockDb.oxigenios.getAll();
     const oxyMap: Record<number, string> = {};
     oxygens.forEach(o => {
       oxyMap[o.idOxigenio] = `${o.quantidadeAbastecida}L (${o.estado})`;
@@ -33,11 +33,11 @@ export const EstacaoList: React.FC = () => {
     setOxygenMap(oxyMap);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     if (!window.confirm("Deseja realmente desacoplar e remover esta estação espacial de órbita?")) return;
     
     try {
-      mockDb.estacoes.delete(id);
+      await mockDb.estacoes.delete(id);
       setSuccess("Estação espacial desacoplada do centro orbital.");
       setError(null);
       loadData();

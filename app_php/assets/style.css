@@ -1,0 +1,28 @@
+:root{--bg:#0b1020;--card:#121a33;--line:#22305e;--txt:#e9efff;--muted:#a6b4e6;--primary:#5b8cff;--danger:#ff5b7c}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:linear-gradient(180deg,var(--bg),#060814);color:var(--txt)}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{max-width:1100px;margin:0 auto;padding:20px}
+nav{display:flex;gap:14px;flex-wrap:wrap;align-items:center;padding:14px 20px;background:rgba(18,26,51,.9);border-bottom:1px solid var(--line);position:sticky;top:0;backdrop-filter:blur(8px)}
+nav .brand{font-weight:700;margin-right:10px;color:var(--txt)}
+.nav-spacer{flex:1 1 auto}
+.nav-user{color:var(--muted);font-size:.9rem}
+.card{background:rgba(18,26,51,.82);border:1px solid var(--line);border-radius:12px;padding:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.table{width:100%;border-collapse:collapse}
+.table th,.table td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+.table th{text-align:left;color:var(--muted);font-weight:600}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{display:inline-block;padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:#0d1531;color:var(--txt);cursor:pointer}
+.btn.primary{background:var(--primary);border-color:transparent;color:#06102a;font-weight:700}
+.btn.danger{background:transparent;border-color:rgba(255,91,124,.6);color:var(--danger)}
+.input,select,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0d1531;color:var(--txt)}
+label{display:block;margin:10px 0 6px;color:var(--muted)}
+form .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:720px){form .row{grid-template-columns:1fr}}
+.flash{padding:10px 12px;border-radius:10px;margin:10px 0;border:1px solid var(--line)}
+.flash.ok{border-color:rgba(91,140,255,.5)}
+.flash.err{border-color:rgba(255,91,124,.5)}
+.small{color:var(--muted);font-size:.92rem}
+

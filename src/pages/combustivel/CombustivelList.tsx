@@ -13,15 +13,15 @@ export const CombustivelList: React.FC = () => {
     loadData();
   }, []);
 
-  const loadData = () => {
-    setItems(mockDb.combustiveis.getAll());
+  const loadData = async () => {
+    setItems(await mockDb.combustiveis.getAll());
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     if (!window.confirm("Deseja realmente remover este combustível químico do inventário?")) return;
     
     try {
-      mockDb.combustiveis.delete(id);
+      await mockDb.combustiveis.delete(id);
       setSuccess("Combustível removido com sucesso.");
       setError(null);
       loadData();

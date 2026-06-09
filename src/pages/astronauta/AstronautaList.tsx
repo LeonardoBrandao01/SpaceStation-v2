@@ -20,10 +20,10 @@ export const AstronautaList: React.FC = () => {
     }
   }, [isAdmin]);
 
-  const loadData = () => {
-    setItems(mockDb.astronautas.getAll());
+  const loadData = async () => {
+    setItems(await mockDb.astronautas.getAll());
 
-    const specs = mockDb.especialidades.getAll();
+    const specs = await mockDb.especialidades.getAll();
     const map: Record<number, string> = {};
     specs.forEach(s => {
       map[s.idEspecialidade] = s.nome;
@@ -31,11 +31,11 @@ export const AstronautaList: React.FC = () => {
     setSpecsMap(map);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     if (!window.confirm("Deseja realmente descadastrar este astronauta da tripulação de voo?")) return;
     
     try {
-      mockDb.astronautas.delete(id);
+      await mockDb.astronautas.delete(id);
       setSuccess("Astronauta removido da tripulação ativa.");
       setError(null);
       loadData();
