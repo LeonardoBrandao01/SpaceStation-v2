@@ -19,7 +19,7 @@ import { SpaceController } from './controllers/space.controller';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'sqlite' as any,
+      type: 'better-sqlite3',
       database: path.join(__dirname, '..', '..', 'database', 'spacestation.sqlite'),
       entities: [
         Especialidade, 
