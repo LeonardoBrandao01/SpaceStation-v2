@@ -13,15 +13,15 @@ export const EmpresaList: React.FC = () => {
     loadData();
   }, []);
 
-  const loadData = () => {
-    setItems(mockDb.empresas.getAll());
+  const loadData = async () => {
+    setItems(await mockDb.empresas.getAll());
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     if (!window.confirm("Deseja realmente descadastrar esta agência/empresa parceira?")) return;
     
     try {
-      mockDb.empresas.delete(id);
+      await mockDb.empresas.delete(id);
       setSuccess("Empresa parceira desvinculada com sucesso.");
       setError(null);
       loadData();

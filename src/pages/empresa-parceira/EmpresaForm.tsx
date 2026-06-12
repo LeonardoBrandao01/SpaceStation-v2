@@ -14,18 +14,27 @@ export const EmpresaForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isEdit) {
-      const item = mockDb.empresas.getById(parseInt(id));
-      if (item) {
-        setNomeEmpresa(item.nomeEmpresa);
-        setPais(item.pais);
-      } else {
-        setError("Agência parceira não encontrada no banco central.");
+    const loadFormData = async () => {
+      try {
+    
+        if (isEdit) {
+          const item = await mockDb.empresas.getById(parseInt(id));
+          if (item) {
+            setNomeEmpresa(item.nomeEmpresa);
+            setPais(item.pais);
+          } else {
+            setError("Agência parceira não encontrada no banco central.");
+          }
+        }
+      
+      } catch (err: any) {
+        setError(err.message || "Erro ao carregar dados.");
       }
-    }
+    };
+    loadFormData();
   }, [id, isEdit]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -39,9 +48,9 @@ export const EmpresaForm: React.FC = () => {
 
     try {
       if (isEdit) {
-        mockDb.empresas.update(parseInt(id!), { nomeEmpresa: trimmedNome, pais: trimmedPais });
+        await mockDb.empresas.update(parseInt(id!), { nomeEmpresa: trimmedNome, pais: trimmedPais });
       } else {
-        mockDb.empresas.create({ nomeEmpresa: trimmedNome, pais: trimmedPais });
+        await mockDb.empresas.create({ nomeEmpresa: trimmedNome, pais: trimmedPais });
       }
       navigate('/empresa-parceira');
     } catch (err: any) {

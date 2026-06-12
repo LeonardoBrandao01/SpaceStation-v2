@@ -40,25 +40,30 @@ Para autenticar no painel, utilize um dos perfis pré-configurados:
 
 ## 🚀 Como Rodar o Projeto (Desenvolvimento)
 
-Siga os passos abaixo para iniciar a aplicação localmente:
+Siga os passos abaixo para iniciar o backend e o frontend localmente:
 
-### 1. Navegue até o diretório do frontend
+### 1. Inicie o backend NestJS
 ```bash
-cd space-station-frontend
-```
-
-### 2. Instale as dependências
-```bash
+cd app
 npm install
+npm run start:dev
 ```
 
-### 3. Inicie o servidor de desenvolvimento
+O backend será executado em:
+`http://localhost:3000`
+
+### 2. Em outra aba/terminal, inicie o frontend React
 ```bash
+cd ..
+npm install
 npm run dev
 ```
 
-### 4. Acesse no navegador
-Abra a URL exibida no console, geralmente:
+O frontend será executado em:
+`http://localhost:5173`
+
+### 3. Acesse no navegador
+Abra a URL exibida no console do frontend, geralmente:
 👉 [http://localhost:5173](http://localhost:5173)
 
 ---

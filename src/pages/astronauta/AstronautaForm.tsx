@@ -21,24 +21,33 @@ export const AstronautaForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isAdmin) {
-      // Load specialties for dropdown
-      setEspecialidades(mockDb.especialidades.getAll());
-
-      if (isEdit) {
-        const item = mockDb.astronautas.getById(parseInt(id));
-        if (item) {
-          setNomeAstro(item.nomeAstro);
-          setPais(item.pais);
-          setEspecialidadeId(item.especialidade_idEspecialidade);
-        } else {
-          setError("Astronauta não localizado nos registros centrais.");
+    const loadFormData = async () => {
+      try {
+    
+        if (isAdmin) {
+          // Load specialties for dropdown
+          setEspecialidades(await mockDb.especialidades.getAll());
+    
+          if (isEdit) {
+            const item = await mockDb.astronautas.getById(parseInt(id));
+            if (item) {
+              setNomeAstro(item.nomeAstro);
+              setPais(item.pais);
+              setEspecialidadeId(item.especialidade_idEspecialidade);
+            } else {
+              setError("Astronauta não localizado nos registros centrais.");
+            }
+          }
         }
+      
+      } catch (err: any) {
+        setError(err.message || "Erro ao carregar dados.");
       }
-    }
+    };
+    loadFormData();
   }, [id, isEdit, isAdmin]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -58,9 +67,9 @@ export const AstronautaForm: React.FC = () => {
       };
 
       if (isEdit) {
-        mockDb.astronautas.update(parseInt(id!), payload);
+        await mockDb.astronautas.update(parseInt(id!), payload);
       } else {
-        mockDb.astronautas.create(payload);
+        await mockDb.astronautas.create(payload);
       }
       navigate('/astronauta');
     } catch (err: any) {

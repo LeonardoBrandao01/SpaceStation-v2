@@ -13,15 +13,15 @@ export const EspecialidadeList: React.FC = () => {
     loadData();
   }, []);
 
-  const loadData = () => {
-    setItems(mockDb.especialidades.getAll());
+  const loadData = async () => {
+    setItems(await mockDb.especialidades.getAll());
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     if (!window.confirm("Deseja realmente excluir esta especialidade espacial?")) return;
     
     try {
-      mockDb.especialidades.delete(id);
+      await mockDb.especialidades.delete(id);
       setSuccess("Especialidade removida do banco de dados.");
       setError(null);
       loadData();

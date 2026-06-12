@@ -14,11 +14,11 @@ export const FogueteList: React.FC = () => {
     loadData();
   }, []);
 
-  const loadData = () => {
-    setItems(mockDb.foguetes.getAll());
+  const loadData = async () => {
+    setItems(await mockDb.foguetes.getAll());
 
     // Map fuels for easy access in display join
-    const fuels = mockDb.combustiveis.getAll();
+    const fuels = await mockDb.combustiveis.getAll();
     const map: Record<number, string> = {};
     fuels.forEach(f => {
       map[f.idCombustivel] = `${f.tipo} (${f.marca})`;
@@ -26,11 +26,11 @@ export const FogueteList: React.FC = () => {
     setCombustiveisMap(map);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     if (!window.confirm("Deseja realmente arquivar este veículo de lançamento?")) return;
     
     try {
-      mockDb.foguetes.delete(id);
+      await mockDb.foguetes.delete(id);
       setSuccess("Foguete removido com sucesso.");
       setError(null);
       loadData();

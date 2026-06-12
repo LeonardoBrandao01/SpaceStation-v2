@@ -30,31 +30,40 @@ export const MissaoForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Load lists
-    setEmpresas(mockDb.empresas.getAll());
-    setAstronautas(mockDb.astronautas.getAll());
-    setFoguetes(mockDb.foguetes.getAll());
-    setCombustiveis(mockDb.combustiveis.getAll());
-    setRelatorios(mockDb.relatorios.getAll());
-
-    if (isEdit) {
-      const item = mockDb.missoes.getById(parseInt(id));
-      if (item) {
-        setNomeMissao(item.nomeMissao);
-        setDuracaoDias(item.duracaoDias.toString());
-        setMotivo(item.motivo);
-        setEmpresaId(item.empresaParceira_idEmpresaParceira);
-        setAstronautaId(item.astronauta_idAstronauta);
-        setFogueteId(item.foguete_idFoguete);
-        setCombustivelId(item.foguete_combustivel_idCombustivel);
-        setRelatorioId(item.relatorio_idRelatorio);
-      } else {
-        setError("Missão espacial não encontrada nos servidores centrais.");
+    const loadFormData = async () => {
+      try {
+    
+        // Load lists
+        setEmpresas(await mockDb.empresas.getAll());
+        setAstronautas(await mockDb.astronautas.getAll());
+        setFoguetes(await mockDb.foguetes.getAll());
+        setCombustiveis(await mockDb.combustiveis.getAll());
+        setRelatorios(await mockDb.relatorios.getAll());
+    
+        if (isEdit) {
+          const item = await mockDb.missoes.getById(parseInt(id));
+          if (item) {
+            setNomeMissao(item.nomeMissao);
+            setDuracaoDias(item.duracaoDias.toString());
+            setMotivo(item.motivo);
+            setEmpresaId(item.empresaParceira_idEmpresaParceira);
+            setAstronautaId(item.astronauta_idAstronauta);
+            setFogueteId(item.foguete_idFoguete);
+            setCombustivelId(item.foguete_combustivel_idCombustivel);
+            setRelatorioId(item.relatorio_idRelatorio);
+          } else {
+            setError("Missão espacial não encontrada nos servidores centrais.");
+          }
+        }
+      
+      } catch (err: any) {
+        setError(err.message || "Erro ao carregar dados.");
       }
-    }
+    };
+    loadFormData();
   }, [id, isEdit]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -85,9 +94,9 @@ export const MissaoForm: React.FC = () => {
       };
 
       if (isEdit) {
-        mockDb.missoes.update(parseInt(id!), payload);
+        await mockDb.missoes.update(parseInt(id!), payload);
       } else {
-        mockDb.missoes.create(payload);
+        await mockDb.missoes.create(payload);
       }
       navigate('/missao');
     } catch (err: any) {

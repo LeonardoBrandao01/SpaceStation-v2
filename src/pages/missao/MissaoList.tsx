@@ -20,16 +20,16 @@ export const MissaoList: React.FC = () => {
     loadData();
   }, []);
 
-  const loadData = () => {
-    const missoes = mockDb.missoes.getAll();
+  const loadData = async () => {
+    const missoes = await mockDb.missoes.getAll();
     setItems(missoes);
 
     // Fetch related items to resolve IDs to names
-    const emps = mockDb.empresas.getAll();
-    const asts = mockDb.astronautas.getAll();
-    const fogs = mockDb.foguetes.getAll();
-    const fuels = mockDb.combustiveis.getAll();
-    const rels = mockDb.relatorios.getAll();
+    const emps = await mockDb.empresas.getAll();
+    const asts = await mockDb.astronautas.getAll();
+    const fogs = await mockDb.foguetes.getAll();
+    const fuels = await mockDb.combustiveis.getAll();
+    const rels = await mockDb.relatorios.getAll();
 
     const empsMap: Record<number, string> = {};
     emps.forEach(e => empsMap[e.idEmpresaParceira] = e.nomeEmpresa);
@@ -55,11 +55,11 @@ export const MissaoList: React.FC = () => {
     });
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     if (!window.confirm("Deseja realmente abortar e excluir esta missão espacial?")) return;
     
     try {
-      mockDb.missoes.delete(id);
+      await mockDb.missoes.delete(id);
       setSuccess("Missão excluída dos sistemas da estação.");
       setError(null);
       loadData();

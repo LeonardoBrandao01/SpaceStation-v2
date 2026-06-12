@@ -29,38 +29,45 @@ export const Dashboard: React.FC = () => {
   const [recentMissions, setRecentMissions] = useState<any[]>([]);
 
   useEffect(() => {
-    // Load initial stats from local storage mock database
-    const ests = mockDb.estacoes.getAll();
-    const miss = mockDb.missoes.getAll();
-    const fogs = mockDb.foguetes.getAll();
-    const asts = mockDb.astronautas.getAll();
+    const loadDashboardData = async () => {
+      try {
+        const ests = await mockDb.estacoes.getAll();
+        const miss = await mockDb.missoes.getAll();
+        const fogs = await mockDb.foguetes.getAll();
+        const asts = await mockDb.astronautas.getAll();
 
-    setStats({
-      estacoes: ests.length,
-      missoes: miss.length,
-      foguetes: fogs.length,
-      astronautas: asts.length
-    });
+        setStats({
+          estacoes: ests.length,
+          missoes: miss.length,
+          foguetes: fogs.length,
+          astronautas: asts.length
+        });
 
-    // Find the first active station to display telemetries
-    const active = ests.find(e => e.estaAtiva) || ests[0];
-    if (active) {
-      setActiveStation(active);
-      setTemp(active.temperatura);
-      
-      // Get associated oxygen log
-      const o2Log = mockDb.oxigenios.getById(active.oxigenio_idOxigenio);
-      if (o2Log) {
-        setO2Level(o2Log.quantidadeAbastecida);
-      } else {
-        setO2Level(1200);
+        // Find the first active station to display telemetries
+        const active = ests.find(e => e.estaAtiva) || ests[0];
+        if (active) {
+          setActiveStation(active);
+          setTemp(active.temperatura);
+          
+          // Get associated oxygen log
+          const o2Log = await mockDb.oxigenios.getById(active.oxigenio_idOxigenio);
+          if (o2Log) {
+            setO2Level(o2Log.quantidadeAbastecida);
+          } else {
+            setO2Level(1200);
+          }
+        } else {
+          setO2Level(1500);
+        }
+
+        // Set recent missions
+        setRecentMissions(miss.slice(-3).reverse());
+      } catch (error) {
+        console.error("Erro ao carregar dados de telemetria:", error);
       }
-    } else {
-      setO2Level(1500);
-    }
+    };
 
-    // Set recent missions
-    setRecentMissions(miss.slice(-3).reverse());
+    loadDashboardData();
   }, []);
 
   // Calculate percentage of O2

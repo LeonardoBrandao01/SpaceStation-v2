@@ -13,15 +13,15 @@ export const OxigenioList: React.FC = () => {
     loadData();
   }, []);
 
-  const loadData = () => {
-    setItems(mockDb.oxigenios.getAll());
+  const loadData = async () => {
+    setItems(await mockDb.oxigenios.getAll());
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     if (!window.confirm("Deseja realmente remover esta carga de oxigênio do sistema?")) return;
     
     try {
-      mockDb.oxigenios.delete(id);
+      await mockDb.oxigenios.delete(id);
       setSuccess("Carga de oxigênio excluída com sucesso.");
       setError(null);
       loadData();

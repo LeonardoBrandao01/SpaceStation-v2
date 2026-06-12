@@ -13,15 +13,15 @@ export const RelatorioList: React.FC = () => {
     loadData();
   }, []);
 
-  const loadData = () => {
-    setItems(mockDb.relatorios.getAll());
+  const loadData = async () => {
+    setItems(await mockDb.relatorios.getAll());
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     if (!window.confirm("Deseja realmente arquivar permanentemente este relatório espacial?")) return;
     
     try {
-      mockDb.relatorios.delete(id);
+      await mockDb.relatorios.delete(id);
       setSuccess("Relatório excluído com sucesso.");
       setError(null);
       loadData();

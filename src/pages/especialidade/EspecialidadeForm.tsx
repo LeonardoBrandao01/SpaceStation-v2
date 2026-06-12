@@ -13,17 +13,26 @@ export const EspecialidadeForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isEdit) {
-      const item = mockDb.especialidades.getById(parseInt(id));
-      if (item) {
-        setNome(item.nome);
-      } else {
-        setError("Especialidade não encontrada nos bancos da estação.");
+    const loadFormData = async () => {
+      try {
+    
+        if (isEdit) {
+          const item = await mockDb.especialidades.getById(parseInt(id));
+          if (item) {
+            setNome(item.nome);
+          } else {
+            setError("Especialidade não encontrada nos bancos da estação.");
+          }
+        }
+      
+      } catch (err: any) {
+        setError(err.message || "Erro ao carregar dados.");
       }
-    }
+    };
+    loadFormData();
   }, [id, isEdit]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -35,9 +44,9 @@ export const EspecialidadeForm: React.FC = () => {
 
     try {
       if (isEdit) {
-        mockDb.especialidades.update(parseInt(id!), { nome: trimmedNome });
+        await mockDb.especialidades.update(parseInt(id!), { nome: trimmedNome });
       } else {
-        mockDb.especialidades.create({ nome: trimmedNome });
+        await mockDb.especialidades.create({ nome: trimmedNome });
       }
       navigate('/especialidade');
     } catch (err: any) {

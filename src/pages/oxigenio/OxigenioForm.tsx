@@ -14,18 +14,27 @@ export const OxigenioForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isEdit) {
-      const item = mockDb.oxigenios.getById(parseInt(id));
-      if (item) {
-        setQuantidade(item.quantidadeAbastecida.toString());
-        setEstado(item.estado);
-      } else {
-        setError("Lote de oxigênio não encontrado.");
+    const loadFormData = async () => {
+      try {
+    
+        if (isEdit) {
+          const item = await mockDb.oxigenios.getById(parseInt(id));
+          if (item) {
+            setQuantidade(item.quantidadeAbastecida.toString());
+            setEstado(item.estado);
+          } else {
+            setError("Lote de oxigênio não encontrado.");
+          }
+        }
+      
+      } catch (err: any) {
+        setError(err.message || "Erro ao carregar dados.");
       }
-    }
+    };
+    loadFormData();
   }, [id, isEdit]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -49,9 +58,9 @@ export const OxigenioForm: React.FC = () => {
       };
 
       if (isEdit) {
-        mockDb.oxigenios.update(parseInt(id!), payload);
+        await mockDb.oxigenios.update(parseInt(id!), payload);
       } else {
-        mockDb.oxigenios.create(payload);
+        await mockDb.oxigenios.create(payload);
       }
       navigate('/oxigenio');
     } catch (err: any) {
