@@ -11,9 +11,9 @@ async function bootstrap() {
 
   // Enforce DTO validations globally
   app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    transform: true,
-    forbidNonWhitelisted: true,
+    whitelist: true, // { "nome": "João", "admin": true }
+    transform: true, ///users/5 -> { id: 5 }
+    forbidNonWhitelisted: true, // { "nome": "João", "admin": true } -> Erro: "admin" não é permitido
   }));
 
   // Enforce friendly database error messages globally

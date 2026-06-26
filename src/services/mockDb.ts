@@ -82,19 +82,41 @@ async function handleResponse(res: Response) {
   return res.json();
 }
 
+// Helper to inject auth headers to API calls
+async function fetchWithAuth(url: string, init?: RequestInit): Promise<Response> {
+  const saved = localStorage.getItem('auth_user');
+  const headers = new Headers(init?.headers || {});
+  
+  if (saved) {
+    try {
+      const session = JSON.parse(saved);
+      if (session.token) {
+        headers.set('Authorization', `Bearer ${session.token}`);
+      }
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  return fetch(url, {
+    ...init,
+    headers,
+  });
+}
+
 // Database client object wrapping fetch API calls to the NestJS backend
 export const mockDb = {
   especialidades: {
     getAll: async (): Promise<Especialidade[]> => {
-      const res = await fetch('/api/especialidades');
+      const res = await fetchWithAuth('/api/especialidades');
       return handleResponse(res);
     },
     getById: async (id: number): Promise<Especialidade | undefined> => {
-      const res = await fetch(`/api/especialidades/${id}`);
+      const res = await fetchWithAuth(`/api/especialidades/${id}`);
       return handleResponse(res);
     },
     create: async (item: Omit<Especialidade, 'idEspecialidade'>): Promise<Especialidade> => {
-      const res = await fetch('/api/especialidades', {
+      const res = await fetchWithAuth('/api/especialidades', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item)
@@ -102,7 +124,7 @@ export const mockDb = {
       return handleResponse(res);
     },
     update: async (id: number, item: Omit<Especialidade, 'idEspecialidade'>): Promise<Especialidade> => {
-      const res = await fetch(`/api/especialidades/${id}`, {
+      const res = await fetchWithAuth(`/api/especialidades/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item)
@@ -110,7 +132,7 @@ export const mockDb = {
       return handleResponse(res);
     },
     delete: async (id: number): Promise<void> => {
-      const res = await fetch(`/api/especialidades/${id}`, {
+      const res = await fetchWithAuth(`/api/especialidades/${id}`, {
         method: 'DELETE'
       });
       return handleResponse(res);
@@ -119,15 +141,15 @@ export const mockDb = {
 
   combustiveis: {
     getAll: async (): Promise<Combustivel[]> => {
-      const res = await fetch('/api/combustiveis');
+      const res = await fetchWithAuth('/api/combustiveis');
       return handleResponse(res);
     },
     getById: async (id: number): Promise<Combustivel | undefined> => {
-      const res = await fetch(`/api/combustiveis/${id}`);
+      const res = await fetchWithAuth(`/api/combustiveis/${id}`);
       return handleResponse(res);
     },
     create: async (item: Omit<Combustivel, 'idCombustivel'>): Promise<Combustivel> => {
-      const res = await fetch('/api/combustiveis', {
+      const res = await fetchWithAuth('/api/combustiveis', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item)
@@ -135,7 +157,7 @@ export const mockDb = {
       return handleResponse(res);
     },
     update: async (id: number, item: Omit<Combustivel, 'idCombustivel'>): Promise<Combustivel> => {
-      const res = await fetch(`/api/combustiveis/${id}`, {
+      const res = await fetchWithAuth(`/api/combustiveis/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item)
@@ -143,7 +165,7 @@ export const mockDb = {
       return handleResponse(res);
     },
     delete: async (id: number): Promise<void> => {
-      const res = await fetch(`/api/combustiveis/${id}`, {
+      const res = await fetchWithAuth(`/api/combustiveis/${id}`, {
         method: 'DELETE'
       });
       return handleResponse(res);
@@ -152,15 +174,15 @@ export const mockDb = {
 
   relatorios: {
     getAll: async (): Promise<Relatorio[]> => {
-      const res = await fetch('/api/relatorios');
+      const res = await fetchWithAuth('/api/relatorios');
       return handleResponse(res);
     },
     getById: async (id: number): Promise<Relatorio | undefined> => {
-      const res = await fetch(`/api/relatorios/${id}`);
+      const res = await fetchWithAuth(`/api/relatorios/${id}`);
       return handleResponse(res);
     },
     create: async (item: Omit<Relatorio, 'idRelatorio'>): Promise<Relatorio> => {
-      const res = await fetch('/api/relatorios', {
+      const res = await fetchWithAuth('/api/relatorios', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item)
@@ -168,7 +190,7 @@ export const mockDb = {
       return handleResponse(res);
     },
     update: async (id: number, item: Omit<Relatorio, 'idRelatorio'>): Promise<Relatorio> => {
-      const res = await fetch(`/api/relatorios/${id}`, {
+      const res = await fetchWithAuth(`/api/relatorios/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item)
@@ -176,7 +198,7 @@ export const mockDb = {
       return handleResponse(res);
     },
     delete: async (id: number): Promise<void> => {
-      const res = await fetch(`/api/relatorios/${id}`, {
+      const res = await fetchWithAuth(`/api/relatorios/${id}`, {
         method: 'DELETE'
       });
       return handleResponse(res);
@@ -185,15 +207,15 @@ export const mockDb = {
 
   empresas: {
     getAll: async (): Promise<EmpresaParceira[]> => {
-      const res = await fetch('/api/empresas');
+      const res = await fetchWithAuth('/api/empresas');
       return handleResponse(res);
     },
     getById: async (id: number): Promise<EmpresaParceira | undefined> => {
-      const res = await fetch(`/api/empresas/${id}`);
+      const res = await fetchWithAuth(`/api/empresas/${id}`);
       return handleResponse(res);
     },
     create: async (item: Omit<EmpresaParceira, 'idEmpresaParceira'>): Promise<EmpresaParceira> => {
-      const res = await fetch('/api/empresas', {
+      const res = await fetchWithAuth('/api/empresas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item)
@@ -201,7 +223,7 @@ export const mockDb = {
       return handleResponse(res);
     },
     update: async (id: number, item: Omit<EmpresaParceira, 'idEmpresaParceira'>): Promise<EmpresaParceira> => {
-      const res = await fetch(`/api/empresas/${id}`, {
+      const res = await fetchWithAuth(`/api/empresas/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item)
@@ -209,7 +231,7 @@ export const mockDb = {
       return handleResponse(res);
     },
     delete: async (id: number): Promise<void> => {
-      const res = await fetch(`/api/empresas/${id}`, {
+      const res = await fetchWithAuth(`/api/empresas/${id}`, {
         method: 'DELETE'
       });
       return handleResponse(res);
@@ -218,15 +240,15 @@ export const mockDb = {
 
   foguetes: {
     getAll: async (): Promise<Foguete[]> => {
-      const res = await fetch('/api/foguetes');
+      const res = await fetchWithAuth('/api/foguetes');
       return handleResponse(res);
     },
     getById: async (id: number): Promise<Foguete | undefined> => {
-      const res = await fetch(`/api/foguetes/${id}`);
+      const res = await fetchWithAuth(`/api/foguetes/${id}`);
       return handleResponse(res);
     },
     create: async (item: Omit<Foguete, 'idFoguete'>): Promise<Foguete> => {
-      const res = await fetch('/api/foguetes', {
+      const res = await fetchWithAuth('/api/foguetes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item)
@@ -234,7 +256,7 @@ export const mockDb = {
       return handleResponse(res);
     },
     update: async (id: number, item: Omit<Foguete, 'idFoguete'>): Promise<Foguete> => {
-      const res = await fetch(`/api/foguetes/${id}`, {
+      const res = await fetchWithAuth(`/api/foguetes/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item)
@@ -242,7 +264,7 @@ export const mockDb = {
       return handleResponse(res);
     },
     delete: async (id: number): Promise<void> => {
-      const res = await fetch(`/api/foguetes/${id}`, {
+      const res = await fetchWithAuth(`/api/foguetes/${id}`, {
         method: 'DELETE'
       });
       return handleResponse(res);
@@ -251,15 +273,15 @@ export const mockDb = {
 
   astronautas: {
     getAll: async (): Promise<Astronauta[]> => {
-      const res = await fetch('/api/astronautas');
+      const res = await fetchWithAuth('/api/astronautas');
       return handleResponse(res);
     },
     getById: async (id: number): Promise<Astronauta | undefined> => {
-      const res = await fetch(`/api/astronautas/${id}`);
+      const res = await fetchWithAuth(`/api/astronautas/${id}`);
       return handleResponse(res);
     },
     create: async (item: Omit<Astronauta, 'idAstronauta'>): Promise<Astronauta> => {
-      const res = await fetch('/api/astronautas', {
+      const res = await fetchWithAuth('/api/astronautas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item)
@@ -267,7 +289,7 @@ export const mockDb = {
       return handleResponse(res);
     },
     update: async (id: number, item: Omit<Astronauta, 'idAstronauta'>): Promise<Astronauta> => {
-      const res = await fetch(`/api/astronautas/${id}`, {
+      const res = await fetchWithAuth(`/api/astronautas/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item)
@@ -275,7 +297,7 @@ export const mockDb = {
       return handleResponse(res);
     },
     delete: async (id: number): Promise<void> => {
-      const res = await fetch(`/api/astronautas/${id}`, {
+      const res = await fetchWithAuth(`/api/astronautas/${id}`, {
         method: 'DELETE'
       });
       return handleResponse(res);
@@ -284,15 +306,15 @@ export const mockDb = {
 
   missoes: {
     getAll: async (): Promise<Missao[]> => {
-      const res = await fetch('/api/missoes');
+      const res = await fetchWithAuth('/api/missoes');
       return handleResponse(res);
     },
     getById: async (id: number): Promise<Missao | undefined> => {
-      const res = await fetch(`/api/missoes/${id}`);
+      const res = await fetchWithAuth(`/api/missoes/${id}`);
       return handleResponse(res);
     },
     create: async (item: Omit<Missao, 'idMissao'>): Promise<Missao> => {
-      const res = await fetch('/api/missoes', {
+      const res = await fetchWithAuth('/api/missoes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item)
@@ -300,7 +322,7 @@ export const mockDb = {
       return handleResponse(res);
     },
     update: async (id: number, item: Omit<Missao, 'idMissao'>): Promise<Missao> => {
-      const res = await fetch(`/api/missoes/${id}`, {
+      const res = await fetchWithAuth(`/api/missoes/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item)
@@ -308,7 +330,7 @@ export const mockDb = {
       return handleResponse(res);
     },
     delete: async (id: number): Promise<void> => {
-      const res = await fetch(`/api/missoes/${id}`, {
+      const res = await fetchWithAuth(`/api/missoes/${id}`, {
         method: 'DELETE'
       });
       return handleResponse(res);
@@ -317,15 +339,15 @@ export const mockDb = {
 
   oxigenios: {
     getAll: async (): Promise<Oxigenio[]> => {
-      const res = await fetch('/api/oxigenios');
+      const res = await fetchWithAuth('/api/oxigenios');
       return handleResponse(res);
     },
     getById: async (id: number): Promise<Oxigenio | undefined> => {
-      const res = await fetch(`/api/oxigenios/${id}`);
+      const res = await fetchWithAuth(`/api/oxigenios/${id}`);
       return handleResponse(res);
     },
     create: async (item: Omit<Oxigenio, 'idOxigenio'>): Promise<Oxigenio> => {
-      const res = await fetch('/api/oxigenios', {
+      const res = await fetchWithAuth('/api/oxigenios', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item)
@@ -333,7 +355,7 @@ export const mockDb = {
       return handleResponse(res);
     },
     update: async (id: number, item: Omit<Oxigenio, 'idOxigenio'>): Promise<Oxigenio> => {
-      const res = await fetch(`/api/oxigenios/${id}`, {
+      const res = await fetchWithAuth(`/api/oxigenios/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item)
@@ -341,7 +363,7 @@ export const mockDb = {
       return handleResponse(res);
     },
     delete: async (id: number): Promise<void> => {
-      const res = await fetch(`/api/oxigenios/${id}`, {
+      const res = await fetchWithAuth(`/api/oxigenios/${id}`, {
         method: 'DELETE'
       });
       return handleResponse(res);
@@ -350,15 +372,15 @@ export const mockDb = {
 
   estacoes: {
     getAll: async (): Promise<Estacao[]> => {
-      const res = await fetch('/api/estacoes');
+      const res = await fetchWithAuth('/api/estacoes');
       return handleResponse(res);
     },
     getById: async (id: number): Promise<Estacao | undefined> => {
-      const res = await fetch(`/api/estacoes/${id}`);
+      const res = await fetchWithAuth(`/api/estacoes/${id}`);
       return handleResponse(res);
     },
     create: async (item: Omit<Estacao, 'idEstacao'>): Promise<Estacao> => {
-      const res = await fetch('/api/estacoes', {
+      const res = await fetchWithAuth('/api/estacoes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item)
@@ -366,7 +388,7 @@ export const mockDb = {
       return handleResponse(res);
     },
     update: async (id: number, item: Omit<Estacao, 'idEstacao'>): Promise<Estacao> => {
-      const res = await fetch(`/api/estacoes/${id}`, {
+      const res = await fetchWithAuth(`/api/estacoes/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item)
@@ -374,7 +396,7 @@ export const mockDb = {
       return handleResponse(res);
     },
     delete: async (id: number): Promise<void> => {
-      const res = await fetch(`/api/estacoes/${id}`, {
+      const res = await fetchWithAuth(`/api/estacoes/${id}`, {
         method: 'DELETE'
       });
       return handleResponse(res);

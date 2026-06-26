@@ -1,18 +1,77 @@
 import { Injectable, OnModuleInit, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { 
-  Especialidade, 
-  Combustivel, 
-  Relatorio, 
-  EmpresaParceira, 
-  Foguete, 
-  Astronauta, 
-  Missao, 
-  Oxigenio, 
-  Estacao, 
-  Login 
+import { randomBytes, scryptSync, createHmac } from 'crypto';
+import {
+  Especialidade,
+  Combustivel,
+  Relatorio,
+  EmpresaParceira,
+  Foguete,
+  Astronauta,
+  Missao,
+  Oxigenio,
+  Estacao,
+  Login
 } from '../entities/space.entities';
+
+const SECRET_KEY = 'orbital-secret-key-12345'; // Chave privada de assinatura do servidor
+
+export interface DecodedToken {
+  username: string;
+  role: string;
+}
+
+// Helpers para Hash e Comparação de Senhas
+export function hashPassword(password: string): string {
+  const salt = randomBytes(16).toString('hex');
+  const hash = scryptSync(password, salt, 64).toString('hex');
+  return `${salt}:${hash}`;
+}
+
+export function comparePassword(password: string, stored: string): boolean {
+  const parts = stored.split(':');
+  if (parts.length !== 2) return false;
+  const [salt, hash] = parts;
+  const hashToCompare = scryptSync(password, salt, 64).toString('hex');
+  return hash === hashToCompare;
+}
+
+// Helpers para Geração e Validação de Tokens Assinados (JWS / HMAC-SHA256)
+export function generateToken(payload: { username: string; role: string }): string {
+  const data = JSON.stringify({ ...payload, exp: Date.now() + 3600000 }); // Expiração em 1 hora
+  const base64Data = Buffer.from(data).toString('base64');
+  const hmac = createHmac('sha256', SECRET_KEY);
+  hmac.update(base64Data);
+  const signature = hmac.digest('base64');
+  return `${base64Data}.${signature}`;
+}
+
+export function verifyToken(token: string): DecodedToken | null {
+  const parts = token.split('.');
+  if (parts.length !== 2) return null;
+  const [base64Data, signature] = parts;
+
+  // Validar assinatura criptográfica com a chave do servidor
+  const hmac = createHmac('sha256', SECRET_KEY);
+  hmac.update(base64Data);
+  const expectedSignature = hmac.digest('base64');
+
+  if (signature !== expectedSignature) {
+    return null; // Token adulterado!
+  }
+
+  // Decodificar payload e checar expiração
+  try {
+    const data = JSON.parse(Buffer.from(base64Data, 'base64').toString('utf8'));
+    if (Date.now() > data.exp) {
+      return null; // Token expirado
+    }
+    return { username: data.username, role: data.role };
+  } catch (e) {
+    return null;
+  }
+}
 
 @Injectable()
 export class SpaceService implements OnModuleInit {
@@ -27,7 +86,7 @@ export class SpaceService implements OnModuleInit {
     @InjectRepository(Oxigenio) private oxigenioRepo: Repository<Oxigenio>,
     @InjectRepository(Estacao) private estacaoRepo: Repository<Estacao>,
     @InjectRepository(Login) private loginRepo: Repository<Login>,
-  ) {}
+  ) { }
 
   async onModuleInit() {
     // Check if seeding is needed
@@ -127,8 +186,8 @@ export class SpaceService implements OnModuleInit {
     });
 
     // 10. Login
-    await this.loginRepo.save({ nome: 'admin', senha: 'admin123' });
-    await this.loginRepo.save({ nome: 'usuario', senha: 'user123' });
+    await this.loginRepo.save({ nome: 'admin', senha: hashPassword('admin123') });
+    await this.loginRepo.save({ nome: 'usuario', senha: hashPassword('user123') });
 
     console.log('Seeding completed successfully!');
   }
@@ -430,15 +489,19 @@ export class SpaceService implements OnModuleInit {
   // ==========================================
   async validateUser(nome: string, senha: string): Promise<any> {
     const user = await this.loginRepo.findOneBy({ nome });
-    if (!user || user.senha !== senha) {
+    if (!user || !comparePassword(senha, user.senha)) {
       throw new BadRequestException('Credenciais espaciais incorretas.');
     }
-    
+
+    const role = user.nome === 'admin' ? 'admin' : 'user';
+    const token = generateToken({ username: user.nome, role });
+
     // Return appropriate session format
     return {
       name: user.nome === 'admin' ? 'Administrador da Estação' : 'Operador de Voo',
       username: user.nome,
-      role: user.nome === 'admin' ? 'admin' : 'user',
+      role,
+      token,
     };
   }
 }
