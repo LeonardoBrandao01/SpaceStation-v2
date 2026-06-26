@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, ParseIntPipe, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, ParseIntPipe, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { SpaceService } from '../services/space.service';
+import { RolesGuard, Roles, Public } from '../guards/roles.guard';
 import { 
   CreateEspecialidadeDto,
   CreateCombustivelDto,
@@ -14,6 +15,7 @@ import {
 } from '../dto/space.dto';
 
 @Controller('api')
+@UseGuards(RolesGuard)
 export class SpaceController {
   constructor(private readonly spaceService: SpaceService) {}
 
@@ -166,26 +168,31 @@ export class SpaceController {
   // ASTRONAUTA
   // ==========================================
   @Get('astronautas')
+  @Roles('admin')
   async getAstronautas() {
     return this.spaceService.getAstronautas();
   }
 
   @Get('astronautas/:id')
+  @Roles('admin')
   async getAstronautaById(@Param('id', ParseIntPipe) id: number) {
     return this.spaceService.getAstronautaById(id);
   }
 
   @Post('astronautas')
+  @Roles('admin')
   async createAstronauta(@Body() dto: CreateAstronautaDto) {
     return this.spaceService.createAstronauta(dto);
   }
 
   @Put('astronautas/:id')
+  @Roles('admin')
   async updateAstronauta(@Param('id', ParseIntPipe) id: number, @Body() dto: CreateAstronautaDto) {
     return this.spaceService.updateAstronauta(id, dto);
   }
 
   @Delete('astronautas/:id')
+  @Roles('admin')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteAstronauta(@Param('id', ParseIntPipe) id: number) {
     return this.spaceService.deleteAstronauta(id);
@@ -282,6 +289,7 @@ export class SpaceController {
   // AUTH
   // ==========================================
   @Post('auth/login')
+  @Public()
   @HttpCode(HttpStatus.OK)
   async login(@Body() dto: LoginDto) {
     return this.spaceService.validateUser(dto.nome, dto.senha);

@@ -15,7 +15,12 @@ import {
 } from 'lucide-react';
 
 export const Dashboard: React.FC = () => {
-  const [stats, setStats] = useState({
+  const [stats, setStats] = useState<{
+    estacoes: number;
+    missoes: number;
+    foguetes: number;
+    astronautas: number | string;
+  }>({
     estacoes: 0,
     missoes: 0,
     foguetes: 0,
@@ -34,13 +39,21 @@ export const Dashboard: React.FC = () => {
         const ests = await mockDb.estacoes.getAll();
         const miss = await mockDb.missoes.getAll();
         const fogs = await mockDb.foguetes.getAll();
-        const asts = await mockDb.astronautas.getAll();
+        
+        let astsCount: number | string = 0;
+        try {
+          const asts = await mockDb.astronautas.getAll();
+          astsCount = asts.length;
+        } catch (e) {
+          console.warn("Acesso restrito ao quantitativo de astronautas para este perfil.");
+          astsCount = '🔒 Restrito';
+        }
 
         setStats({
           estacoes: ests.length,
           missoes: miss.length,
           foguetes: fogs.length,
-          astronautas: asts.length
+          astronautas: astsCount
         });
 
         // Find the first active station to display telemetries
